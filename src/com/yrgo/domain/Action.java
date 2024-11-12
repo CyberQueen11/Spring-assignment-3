@@ -38,8 +38,6 @@ public class Action {
 		this.requiredBy = requiredBy;
 		this.owningUser = owningUser;
 		this.complete = complete;
-
-
 		this.actionId = new Integer(actionId);
 	}
 

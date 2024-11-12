@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.List;
 
 public class CustomerDaoJdbcTemplateImpl implements CustomerDao{
@@ -44,6 +43,12 @@ public class CustomerDaoJdbcTemplateImpl implements CustomerDao{
 
     public CustomerDaoJdbcTemplateImpl(JdbcTemplate template){
         this.template = template;
+
+        try{
+            createTables();
+        } catch (Exception e) {
+            System.err.println("Table already exists");
+        }
     }
 
     private void createTables(){
@@ -63,8 +68,7 @@ public class CustomerDaoJdbcTemplateImpl implements CustomerDao{
                 customer.getCompanyName(),
                 customer.getEmail(),
                 customer.getTelephone(),
-                customer.getNotes(),
-                customer.getCalls());
+                customer.getNotes());
 
     }
 
@@ -99,7 +103,11 @@ public class CustomerDaoJdbcTemplateImpl implements CustomerDao{
 
     @Override
     public void delete(Customer oldCustomer) throws RecordNotFoundException {
-        this.template.update(DELETE_SQL, oldCustomer.getCustomerId());
+        try{
+            this.template.update(DELETE_SQL, oldCustomer.getCustomerId());
+        } catch(EmptyResultDataAccessException e){
+            throw new RecordNotFoundException();
+        }
     }
 
     @Override
@@ -140,12 +148,13 @@ public class CustomerDaoJdbcTemplateImpl implements CustomerDao{
 class CustomerRowMapper implements RowMapper<Customer> {
 
     @Override
-    public Customer mapRow(ResultSet rs, int arg1) throws SQLException {
+    public Customer mapRow(ResultSet rs, int i) throws SQLException {
         String customerId = rs.getString(1);
         String companyName = rs.getString(2);
         String email = rs.getString(3);
         String telephone = rs.getString(4);
         String notes = rs.getString(5);
+
         return new Customer( customerId, companyName, email, telephone, notes);
     }
 }
