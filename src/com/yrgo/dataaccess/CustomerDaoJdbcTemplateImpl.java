@@ -57,7 +57,7 @@ public class CustomerDaoJdbcTemplateImpl implements CustomerDao{
             this.template.execute(CREATE_CALLS_TABLE_SQL);
             System.out.println("Tables created successfully");
         } catch (org.springframework.jdbc.BadSqlGrammarException e){
-            System.out.println("Assuming the tables already exist or cannot be created due to SQL error: " + e.getMessage());
+            System.out.println("Assuming the tables already exist or cannot be created due to SQL error");
         }
     }
 
